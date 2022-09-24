@@ -36,10 +36,9 @@ export default{
       .catch((error) => {
         return res.status(500).json({error})
       })
+    }
+    catch(error){
+      return res.status(500).json({error})
+    }
   }
-  catch(error){
-    return res.status(500).json({error})
-  }
-}
-
 }
