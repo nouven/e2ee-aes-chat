@@ -7,12 +7,13 @@ import mongoose from 'mongoose'
 
 import socketio from './socketio.js'
 import authRoute from './routes/auth.route.js'
+import messageRoute from './routes/message.route.js'
+import roomRoute from './routes/room.route.js'
 
 import User from './models/user.model.js'
 
 dotenv.config()
 const app = express()
-app.use(cors())
 const httpServer = http.createServer(app)
 
 const io = new Server(httpServer, {
@@ -33,15 +34,16 @@ mongoose.connect(process.env.MONGODB_URL)
 
 function main() {
   socketio(io)
-
+  app.use(cors())
   app.use(express.json())
   app.use('/auth', authRoute)
+  app.use('/message', messageRoute)
+  app.use('/room', roomRoute)
 
   httpServer.listen(process.env.PORT || 5001, () => {
     console.log(`app is running!!`)
   })
 }
-
 
 
 

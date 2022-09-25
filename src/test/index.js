@@ -1,29 +1,27 @@
 import crypto from 'crypto'
-import { argv0 } from 'process';
-
-
-// Calling two getDiffieHellman method
-// with its parameter, groupName
-const diffiehellmangrp1 = crypto.getDiffieHellman('modp14');
-const diffiehellmangrp2 = crypto.getDiffieHellman('modp14');
-
-// Generating keys
-diffiehellmangrp1.generateKeys();
-diffiehellmangrp2.generateKeys();
-
-
-// Computing secret
-const diffiehellmangrp1sc = diffiehellmangrp1
-  .computeSecret(diffiehellmangrp2.getPublicKey(), null);
-
-const diffiehellmangrp2sc = diffiehellmangrp2
-  .computeSecret(diffiehellmangrp1.getPublicKey(), null);
-
-console.log(diffiehellmangrp1sc.toString('hex') === diffiehellmangrp2sc.toString('hex'))
-
-const data = []
+import { argv } from 'process';
+import cryptJs from 'crypto-js'
 
 
 
+const A = crypto.getDiffieHellman('modp15')
+const B = crypto.getDiffieHellman('modp15')
+const C = crypto.getDiffieHellman('modp15')
 
+A.generateKeys()
+C.generateKeys()
+B.generateKeys()
+
+let AC = A.computeSecret(C.getPublicKey(), null, 'hex')
+let BC = B.computeSecret(C.getPublicKey(), null, 'hex')
+
+let aKey = A.computeSecret(Buffer.from(BC, 'hex'), null, 'hex')
+let bKey = B.computeSecret(Buffer.from(AC, 'hex'), null, 'hex')
+
+console.log(aKey === bKey)
+
+let cipherText = cryptJs.AES.encrypt('hello word', aKey).toString()
+let plainText = cryptJs.AES.decrypt(cipherText, bKey).toString(cryptJs.enc.Utf8)
+console.log(`cipher text: ${cipherText}`)
+console.log(`plain text: ${plainText}`)
 

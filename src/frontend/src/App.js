@@ -3,6 +3,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Chat from './pages/Chat'
 import AuthContext, { authContext } from './contexts/AuthContext'
+import ChatContext, { chatContext} from './contexts/ChatContext'
 import { useContext } from 'react'
 
 function App() {
@@ -21,7 +22,9 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/" element={
           <ProtectedRoute>
-            <Chat />
+            <ChatContext>
+              <Chat />
+            </ChatContext>
           </ProtectedRoute>
         } />
       </Routes>
