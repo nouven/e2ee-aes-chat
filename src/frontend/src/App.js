@@ -16,7 +16,7 @@ function App() {
     return children
   }
   return (
-    <div className="flex justify-center items-center h-screen w-screen p-12 ">
+    <div className="flex justify-center items-center h-screen w-screen p-12 bg-gray-300 bg-opacity-5">
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

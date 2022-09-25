@@ -11,7 +11,7 @@ export default function Room({props }) {
     }
     let preRoom = currentRoom?._id
     let curRoom = props._id
-    socket.emit('joinRoom', {curRoom, preRoom})
+    socket.emit('join-room', {curRoom, preRoom})
     setCurrentRoom(props)
     setRooms(prev => {
       return prev.map(room => {
@@ -28,10 +28,10 @@ export default function Room({props }) {
     <div onClick={() => handleClick()} className="flex items-center h-12 border gap-3">
       <div className="relative">
         <div className="relative h-10 w-10 rounded-full overflow-hidden ">
-          <img className='object-cover' src="https://tinhdaunhuy.com/wp-content/uploads/2015/08/default-avatar.jpg" alt="" />
+          <img className='object-cover' src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRG-HjzFqPBh8BJyarI0wxpsKF7D100_Hgb9g&usqp=CAU" alt="" />
         </div>
         {props.isOnline && (
-          <div className="absolute -bottom-1 -right-0 h-4 w-4 border-2 border-white   rounded-full bg-green-500 "></div>
+          <div className="absolute -bottom-1 -right-0 h-4 w-4 border-[3px] border-white   rounded-full bg-green-500 "></div>
         )}
     </div>
       <div className="flex flex-col flex-1 justify-between">

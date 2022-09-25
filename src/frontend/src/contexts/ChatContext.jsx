@@ -11,6 +11,7 @@ export default function ChatContext({ children }) {
   const [messages, setMessages] = useState([])
   let [currentRoom, setCurrentRoom] = useState({})
   const [socket, setSocket] = useState(() => io('http://localhost:5000'))
+  //const [socket, setSocket] = useState(() => io('http://192.168.0.103:5000'))
   let { currentUser } = useContext(authContext)
   const value = {
     rooms, setRooms,
