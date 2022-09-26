@@ -9,5 +9,15 @@ export default {
       .catch(error => {
         return res.status(500).json(error)
       })
+  },
+  updateRoom: (req, res) => {
+    try{
+      let {_id , isencrypted} = req.body
+      Room.updateOne({_id}, {$set:{isencrypted}}).exec() 
+      return res.status(200).json({message: 'updated!'})
+    }
+    catch(error){
+      return res.status(500).json(error)
+    }
   }
 }

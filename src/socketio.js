@@ -59,6 +59,14 @@ export default function(io) {
         io.to(user.socketid).emit('exchange-key-5', {from, to, roomid, cc})
       }
     })
+    socket.on('change-lock-state', ({roomid, userid, isencrypted}) => {
+      let user = onlineUsers.find(onlineUser => {
+        return onlineUser._id === userid
+      })
+      if(user){
+        io.to(user.socketid).emit('change-lock-state', {roomid, isencrypted})
+      }
+    })
     socket.on('disconnect', () => {
       let user = onlineUsers.find(onlineUser => {
         return onlineUser.socketid === socket.id

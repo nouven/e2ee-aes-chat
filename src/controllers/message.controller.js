@@ -19,6 +19,13 @@ export default {
   },
 
   getAllMessage: async(req, res) => {
-
+    try{
+      let roomid = req.query.roomid
+      let messages = await Message.find({roomid}).sort({createdAt: -1}).exec()
+      return res.status(200).json(messages)
+    }
+    catch(error){
+      return res.status(500).json(error)
+    }
   }
 }

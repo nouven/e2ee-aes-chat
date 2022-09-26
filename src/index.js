@@ -10,7 +10,6 @@ import authRoute from './routes/auth.route.js'
 import messageRoute from './routes/message.route.js'
 import roomRoute from './routes/room.route.js'
 
-import User from './models/user.model.js'
 
 dotenv.config()
 const app = express()

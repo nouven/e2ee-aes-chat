@@ -1,6 +1,8 @@
 import { useContext, useEffect, useState } from 'react'
 import {authContext} from '../contexts/AuthContext'
 import { chatContext } from '../contexts/ChatContext'
+import {getAllMessage} from '../api'
+import {aesDecrypt} from '../utils'
 export default function Room({props }) {
   let {currentUser } = useContext(authContext)
   let {socket,setRooms, setMessages, currentRoom, setCurrentRoom} = useContext(chatContext)
@@ -21,7 +23,21 @@ export default function Room({props }) {
         return room
       })
     })
-    setMessages([])
+    getAllMessage({roomid: props._id}).then(data =>{
+      let arr = data.map(message => {
+        let{isencrypted, content, sender} = message
+        let isFriend = true
+        if (sender === currentUser._id) {
+          isFriend = false
+        }
+        let key = localStorage.getItem(props._id)
+        if (key && isencrypted) {
+          content = aesDecrypt(content, key)
+        }
+        return {isFriend, content, isencrypted}
+      })
+      setMessages(arr)
+    })
   }
 
   return (

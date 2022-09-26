@@ -46,3 +46,35 @@ export const getAllRoom = async ({ _id }) => {
   return data.data
 }
 
+export const updateRoom = async ({ _id, isencrypted }) => {
+  let data = await axios({
+    method: 'put',
+    url: `${baseUrl}/room/`,
+    data: { _id, isencrypted }
+  })
+  return data.data
+}
+export const createMessage = async ({ roomid, type, content, sender, receiver, isencrypted }) => {
+  let data = await axios({
+    method: 'post',
+    url: `${baseUrl}/message/`,
+    data: {
+      roomid,
+      type,
+      content,
+      sender,
+      receiver,
+      isencrypted
+    }
+  })
+  return data.data
+}
+
+export const getAllMessage = async ({ roomid }) => {
+  let data = await axios({
+    method: 'get',
+    url: `${baseUrl}/message/`,
+    params: { roomid }
+  })
+  return data.data
+}
