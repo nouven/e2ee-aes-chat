@@ -1,9 +1,9 @@
-//import cryptoJs from 'crypto-js'
-import df from 'diffie-hellman'
-import { Buffer } from 'buffer'
+import cryptoJs from 'crypto-js'
 
-export const generateKey = () => {
-  return df.getDiffieHellman('modp15')
+export const aesEncrypt = (message, key) => {
+  return cryptoJs.AES.encrypt(message, key).toString()
 }
-
+export const aesDecrypt = (message, key) => {
+  return cryptoJs.AES.decrypt(message, key).toString(cryptoJs.enc.Utf8)
+}
 

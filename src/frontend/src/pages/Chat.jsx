@@ -4,6 +4,7 @@ import { FiSend, FiLogOut } from 'react-icons/fi'
 import { AiFillLock, AiFillUnlock } from 'react-icons/ai'
 import { generateKey } from '../utils'
 import df from 'diffie-hellman'
+import { aesEncrypt, aesDecrypt } from '../utils'
 
 import { useContext, useEffect, useRef, useState } from 'react'
 import { authContext } from '../contexts/AuthContext'
@@ -12,7 +13,7 @@ import { chatContext } from '../contexts/ChatContext'
 
 export default function Chat() {
   let { logout, currentUser } = useContext(authContext)
-  let { rooms, setRooms, messages, setMessages, currentRoom, setCurrenRoom, socket } = useContext(chatContext)
+  let { rooms, setRooms, messages, setMessages, currentRoom, setCurrentRoom, socket } = useContext(chatContext)
 
   let [inputValue, setInputValue] = useState('')
   let [diffie, setDiffie] = useState(() => {
@@ -70,6 +71,11 @@ export default function Chat() {
       if (sender === currentUser._id) {
         isFriend = false
       }
+      let key = localStorage.getItem(currentRoom._id)
+      console.log(content)
+      if (key) {
+        content = aesDecrypt(content, key)
+      }
       setMessages(prev => {
         return [{ isFriend, content, isencrypted }, ...prev]
       })
@@ -103,6 +109,8 @@ export default function Chat() {
     socket.on('exchange-key-5', ({ from, to, roomid, cc }) => {
       let ccc = diffie.computeSecret(Buffer.from(cc, 'hex'), null, 'hex').toString('hex')
       console.log(ccc)
+      localStorage.setItem(currentRoom._id, ccc)
+      setCurrentRoom(prev => { return { ...prev, isencrypted: true } })
     })
     return () => {
       socket.off('exchange-key-2')
@@ -119,6 +127,11 @@ export default function Chat() {
       let sender = currentUser._id
       let receiver = currentRoom.userid
       let isencrypted = false
+
+      let key = localStorage.getItem(currentRoom._id)
+      if (key) {
+        content = aesEncrypt(content, key)
+      }
       socket.emit('chat', { roomid, type, content, sender, receiver, isencrypted })
       setInputValue('')
     } else {
