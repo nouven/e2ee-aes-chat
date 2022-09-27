@@ -36,6 +36,9 @@ function main() {
   socketio(io)
   app.use(cors())
   app.use(express.json())
+  app.get('/ping', (req, res) => {
+    return res.status(200).json({ message: "pong!!" })
+  })
   app.use('/auth', authRoute)
   app.use('/message', messageRoute)
   app.use('/room', roomRoute)
