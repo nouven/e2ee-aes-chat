@@ -39,32 +39,32 @@ export default function(io) {
         io.to(user.socketid).emit('chat-2', { roomid })
       }
     })
-    socket.on('exchange-key-1', ({from, to, roomid}) => {
+    socket.on('exchange-key-1', ({ from, to, roomid }) => {
       let user = onlineUsers.find(onlineUser => {
         return onlineUser._id === to
       })
-      if(!user){
-        io.to(socket.id).emit('exchange-key-2', {from, to, roomid, message: 'rejected'})
-      }else{
+      if (!user) {
+        io.to(socket.id).emit('exchange-key-2', { from, to, roomid, message: 'rejected' })
+      } else {
         let c = crypto.getDiffieHellman('modp15').generateKeys().toString('hex')
-        io.to(socket.id).emit('exchange-key-3', {from, to, roomid, c})
-        io.to(user.socketid).emit('exchange-key-3', {from: to, to: from, roomid, c})
-      }
-    }) 
-    socket.on('exchange-key-4', ({from, to, roomid, cc}) => {
-      let user = onlineUsers.find(onlineUser => {
-        return onlineUser._id === to
-      })
-      if(user){
-        io.to(user.socketid).emit('exchange-key-5', {from, to, roomid, cc})
+        io.to(socket.id).emit('exchange-key-3', { from, to, roomid, c })
+        io.to(user.socketid).emit('exchange-key-3', { from: to, to: from, roomid, c })
       }
     })
-    socket.on('change-lock-state', ({roomid, userid, isencrypted}) => {
+    socket.on('exchange-key-4', ({ from, to, roomid, cc }) => {
+      let user = onlineUsers.find(onlineUser => {
+        return onlineUser._id === to
+      })
+      if (user) {
+        io.to(user.socketid).emit('exchange-key-5', { from, to, roomid, cc })
+      }
+    })
+    socket.on('change-lock-state', ({ roomid, userid, isencrypted }) => {
       let user = onlineUsers.find(onlineUser => {
         return onlineUser._id === userid
       })
-      if(user){
-        io.to(user.socketid).emit('change-lock-state', {roomid, isencrypted})
+      if (user) {
+        io.to(user.socketid).emit('change-lock-state', { roomid, isencrypted })
       }
     })
     socket.on('disconnect', () => {

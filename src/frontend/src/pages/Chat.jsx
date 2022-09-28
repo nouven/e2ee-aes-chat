@@ -9,7 +9,7 @@ import { aesEncrypt, aesDecrypt } from '../utils'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { authContext } from '../contexts/AuthContext'
 import { chatContext } from '../contexts/ChatContext'
-import {createMessage, updateRoom} from '../api'
+import { createMessage, updateRoom } from '../api'
 
 
 export default function Chat() {
@@ -119,24 +119,27 @@ export default function Chat() {
       socket.off('exchange-key-5')
     }
   }, [currentRoom])
-  
+
   useEffect(() => {
-    socket.on('change-lock-state', ({roomid, isencrypted}) => {
-      if(currentRoom._id === roomid){
-        setRooms(prev => {
-          return prev.map(room => {
-            if(room._id === currentRoom._id){
-              room.isencrypted = isencrypted
-            }
-            return room
-          })
+    socket.on('change-lock-state', ({ roomid, isencrypted }) => {
+      setRooms(prev => {
+        return prev.map(room => {
+          if (room._id === roomid) {
+            room.isencrypted = isencrypted
+          }
+          return room
+        })
+      })
+      if (currentRoom._id === roomid) {
+        setCurrentRoom(prev => {
+          return { ...prev, isencrypted }
         })
       }
     })
     return () => {
       socket.off('change-lock-state')
     }
-  },[currentRoom])
+  }, [currentRoom])
 
   let handleSubmit = (e) => {
     if (e.keyCode == 13) {
@@ -153,7 +156,7 @@ export default function Chat() {
         content = aesEncrypt(content, key)
       }
       socket.emit('chat', { roomid, type, content, sender, receiver, isencrypted })
-      createMessage({roomid, type, content, sender, receiver, isencrypted})
+      createMessage({ roomid, type, content, sender, receiver, isencrypted })
       setInputValue('')
     } else {
       return
@@ -161,23 +164,26 @@ export default function Chat() {
   }
   let handleExchangeKey = () => {
     let isencrypted = false
-    if(!currentRoom.isencrypted){
+    if (!currentRoom.isencrypted) {
       isencrypted = true
       socket.emit('exchange-key-1', { from: currentUser._id, to: currentRoom.userid, roomid: currentRoom._id })
     }
-    updateRoom({_id: currentRoom._id, isencrypted})
+    updateRoom({ _id: currentRoom._id, isencrypted })
+    setCurrentRoom(prev => {
+      return { ...prev, isencrypted }
+    })
     setRooms(prev => {
       return prev.map(room => {
-        if(room._id === currentRoom._id){
+        if (room._id === currentRoom._id) {
           room.isencrypted = isencrypted
         }
         return room
       })
     })
-    socket.emit('change-lock-state', {roomid: currentRoom._id, userid: currentRoom.userid, isencrypted})
+    socket.emit('change-lock-state', { roomid: currentRoom._id, userid: currentRoom.userid, isencrypted })
   }
   return (
-    <div className="flex w-full h-full border border-black">
+    <div className="flex w-full h-full border rounded-md border-black lg:max-w-[1024px]">
       <div className="flex flex-col w-[300px] gap-1 border-r">
         <div className="flex items-center h-14 border">
           <div className="flex justify-start items-end gap-2 flex-1">
@@ -220,7 +226,7 @@ export default function Chat() {
         </div>
         {currentRoom._id && (
           <div className="flex justify-between gap-1 items-center px-1 h-12 ">
-            <div className="flex-1 border border-black">
+            <div className="flex-1 border border-black rounded-md overflow-hidden">
               <input onKeyDown={e => handleSubmit(e)} onChange={(e) => setInputValue(e.target.value)} value={inputValue} className="w-full p-1 outline-none" type='text' />
             </div>
             <div className="text-xl">
